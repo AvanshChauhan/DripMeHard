@@ -1,11 +1,11 @@
 import { body, validationResult } from "express-validator";
 
-function validateRequest(req,res,next){
-    const errors=validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({errors:errors.array()})
-    }
-    next()
+function validateRequest(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
 }
 
 export const validateRegisterUser = [
@@ -25,5 +25,6 @@ export const validateRegisterUser = [
   body("password")
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters long"),
-    validateRequest
+  body("isSeller").isBoolean().withMessage("seller must be a boolean"),
+  validateRequest,
 ];
