@@ -1,20 +1,23 @@
 import userModel from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import { config } from "dotenv";
-async function sendTokenResponse(user, res,message) {
+import { config } from "../../config/config.js";
+
+async function sendTokenResponse(user, res, message) {
   if (!config.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined in enviromnet varables");
+    throw new Error("JWT_SECRET is not defined in environment variables");
   }
   const token = jwt.sign(
-    {
-      id: user._id,
-    },
+    { id: user._id },
     config.JWT_SECRET,
-    { expiresIn: "7d" },
+    { expiresIn: "7d" }
   );
-  res.cookie("token",token)
-  res.status(200).json({
-    success:true,
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+  res.status(201).json({
+    success: true,
     token,
     message,
     user: {
@@ -26,8 +29,9 @@ async function sendTokenResponse(user, res,message) {
     },
   });
 }
+
 export const register = async (req, res) => {
-  const { email, password, contact, fullname ,isSeller} = req.body;
+  const { email, password, contact, fullname, isSeller } = req.body;
   try {
     const isUserExist = await userModel.findOne({
       $or: [{ email }, { contact }],
@@ -35,7 +39,7 @@ export const register = async (req, res) => {
     if (isUserExist) {
       return res.status(400).json({
         success: false,
-        message: "This user already exist",
+        message: "An account with this email or contact already exists.",
       });
     }
     const user = await userModel.create({
@@ -43,11 +47,11 @@ export const register = async (req, res) => {
       password,
       contact,
       fullname,
-      role:isSeller ? "seller":"user"
+      role: isSeller ? "seller" : "user",
     });
-    await sendTokenResponse(user,res,"User registered successfully");
+    await sendTokenResponse(user, res, "User registered successfully");
   } catch (error) {
-    console.log(`some error has occured ${error}`);
-    return res.status(500).json({ message: "Server error" });
+    console.error(`Registration error: ${error}`);
+    return res.status(500).json({ success: false, message: "Server error. Please try again." });
   }
 };
