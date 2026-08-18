@@ -55,3 +55,28 @@ export const register = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error. Please try again." });
   }
 };
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+    await sendTokenResponse(user, res, "User logged in successfully");
+  } catch (error) {
+    console.error(`Login error: ${error}`);
+    return res.status(500).json({ success: false, message: "Server error. Please try again." });
+  }
+};
+

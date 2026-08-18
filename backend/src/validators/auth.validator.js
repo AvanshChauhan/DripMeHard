@@ -28,3 +28,13 @@ export const validateRegisterUser = [
   body("isSeller").isBoolean().withMessage("seller must be a boolean"),
   validateRequest,
 ];
+export const validateLoginUser = [
+  body("email")
+    .isEmail()
+    .withMessage("Invalid email format please check again"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long"),
+  body("isSeller").optional().isBoolean().withMessage("seller must be a boolean"),
+  validateRequest,
+];
