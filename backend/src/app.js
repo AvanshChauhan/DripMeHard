@@ -1,4 +1,4 @@
-import cors from "cors";
+// import cors from "cors";
 import cookieParser from "cookie-parser";
 import express from "express";
 import morgan from "morgan";
@@ -7,14 +7,14 @@ import authRouter from "./routes/auth.routes.js";
 const app = express();
 
 // ── CORS — allow Vite dev server origins ──────────────────────
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173", "http://localhost:5174"],
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 
 app.use(morgan("dev"));
 app.use(express.json());
