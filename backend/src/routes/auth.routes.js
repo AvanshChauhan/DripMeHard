@@ -7,7 +7,5 @@ const router=Router()
 router.post("/register",validateRegisterUser,register)
 router.post("/login",validateLoginUser,login)
 router.get("/google",passport.authenticate("google",{scope:["profile","email"]}))
-router.get("/google/callback",passport.authenticate("google",{session:false}),(req,res)=>{
-    googleCallback
-})
+router.get("/google/callback", passport.authenticate("google", { session: false }), googleCallback)
 export default router

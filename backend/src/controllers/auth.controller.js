@@ -82,7 +82,9 @@ export const login = async (req, res) => {
   }
 };
 
-export const googleCallback=async (req,res) => {
-  console.log(res.user)
-  res.redirect("http://localhost:5173/dashboard")
-}
+export const googleCallback = async (req, res) => {
+  console.log("=== Google Auth User Data ===");
+  console.log(JSON.stringify(req.user, null, 2));
+  console.log("==============================");
+  res.redirect("http://localhost:5173/");
+};

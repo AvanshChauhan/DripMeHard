@@ -261,6 +261,16 @@ function LoginForm() {
           )}
         </button>
 
+        {/* Continue with Google */}
+        <div className="text-center mb-4">
+          <a
+            href="/api/auth/google"
+            className="text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
+          >
+            Continue with Google
+          </a>
+        </div>
+
         {/* Sign up link */}
         <p className="text-center text-[14px] text-[#6B6B6B]">
           Don&apos;t have an account?{' '}
