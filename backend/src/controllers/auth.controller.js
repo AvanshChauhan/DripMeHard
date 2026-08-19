@@ -81,3 +81,8 @@ export const login = async (req, res) => {
       .json({ success: false, message: "Server error. Please try again." });
   }
 };
+
+export const googleCallback=async (req,res) => {
+  console.log(req.user)
+  res.redirect("http://localhost:5173/dashboard")
+}
