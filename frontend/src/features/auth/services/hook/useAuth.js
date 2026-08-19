@@ -1,5 +1,5 @@
 import { setError, setLoading, setUser } from "../../state/auth.slice.js";
-import { register, login } from "../auth.api.js";
+import { login, register } from "../auth.api.js";
 import { useDispatch } from "react-redux";
 
 /**
@@ -9,11 +9,23 @@ import { useDispatch } from "react-redux";
 export const useAuth = () => {
   const dispatch = useDispatch();
 
-  async function handleRegister({ email, contact, password, fullname, isSeller = false }) {
+  async function handleRegister({
+    email,
+    contact,
+    password,
+    fullname,
+    isSeller = false,
+  }) {
     dispatch(setLoading(true));
     dispatch(setError(null));
     try {
-      const data = await register({ email, contact, password, fullname, isSeller });
+      const data = await register({
+        email,
+        contact,
+        password,
+        fullname,
+        isSeller,
+      });
       dispatch(setUser(data.user));
       return data;
     } catch (err) {
@@ -28,7 +40,6 @@ export const useAuth = () => {
       dispatch(setLoading(false));
     }
   }
-
   async function handleLogin({ email, password }) {
     dispatch(setLoading(true));
     dispatch(setError(null));
@@ -40,7 +51,7 @@ export const useAuth = () => {
       const message =
         err?.response?.data?.message ||
         err?.response?.data?.errors?.[0]?.msg ||
-        "Login failed. Please check your credentials and try again.";
+        "Login failed. Please try again.";
       dispatch(setError(message));
       // Re-throw so the form component can handle UI error state
       throw err;
@@ -48,7 +59,5 @@ export const useAuth = () => {
       dispatch(setLoading(false));
     }
   }
-
   return { handleRegister, handleLogin };
 };
-

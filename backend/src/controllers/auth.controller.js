@@ -6,11 +6,9 @@ async function sendTokenResponse(user, res, message) {
   if (!config.JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables");
   }
-  const token = jwt.sign(
-    { id: user._id },
-    config.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
+  const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+    expiresIn: "7d",
+  });
   res.cookie("token", token, {
     httpOnly: true,
     sameSite: "lax",
@@ -52,7 +50,9 @@ export const register = async (req, res) => {
     await sendTokenResponse(user, res, "User registered successfully");
   } catch (error) {
     console.error(`Registration error: ${error}`);
-    return res.status(500).json({ success: false, message: "Server error. Please try again." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error. Please try again." });
   }
 };
 
@@ -62,21 +62,22 @@ export const login = async (req, res) => {
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(400).json({
+        message: "The user with such email do not exist ",
         success: false,
-        message: "Invalid email or password",
       });
     }
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(400).json({
+        message: "Password do not match",
         success: false,
-        message: "Invalid email or password",
       });
     }
     await sendTokenResponse(user, res, "User logged in successfully");
   } catch (error) {
-    console.error(`Login error: ${error}`);
-    return res.status(500).json({ success: false, message: "Server error. Please try again." });
+    console.error(`Registration error: ${error}`);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error. Please try again." });
   }
 };
-
