@@ -1,29 +1,28 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router';
-import FormInput from './FormInput';
-import { useAuth } from '../services/hook/useAuth';
-
+import React, { useState, useCallback } from "react";
+import { useNavigate } from "react-router";
+import FormInput from "./FormInput";
+import { useAuth } from "../services/hook/useAuth";
 /* ── Validation ──────────────────────────────────────── */
 function validateField(name, value) {
   switch (name) {
-    case 'email':
-      if (!value.trim()) return 'Email address is required.';
+    case "email":
+      if (!value.trim()) return "Email address is required.";
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()))
-        return 'Enter a valid email address.';
-      return '';
-    case 'password':
-      if (!value) return 'Password is required.';
-      if (value.length < 8) return 'Password must be at least 8 characters.';
-      return '';
+        return "Enter a valid email address.";
+      return "";
+    case "password":
+      if (!value) return "Password is required.";
+      if (value.length < 8) return "Password must be at least 8 characters.";
+      return "";
     default:
-      return '';
+      return "";
   }
 }
 
 function validateAll(fields) {
   return {
-    email: validateField('email', fields.email),
-    password: validateField('password', fields.password),
+    email: validateField("email", fields.email),
+    password: validateField("password", fields.password),
   };
 }
 
@@ -68,30 +67,33 @@ function LoginForm() {
   const navigate = useNavigate();
   const { handleLogin } = useAuth();
 
-  const [fields, setFields] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [fields, setFields] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
   const [touched, setTouched] = useState({ email: false, password: false });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [globalError, setGlobalError] = useState('');
+  const [globalError, setGlobalError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleChange = useCallback((name, value) => {
-    setFields(prev => ({ ...prev, [name]: value }));
-    setGlobalError('');
-    if (touched[name]) {
-      setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
-    }
-  }, [touched]);
+  const handleChange = useCallback(
+    (name, value) => {
+      setFields((prev) => ({ ...prev, [name]: value }));
+      setGlobalError("");
+      if (touched[name]) {
+        setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+      }
+    },
+    [touched],
+  );
 
   const handleBlur = useCallback((name, value) => {
-    setTouched(prev => ({ ...prev, [name]: true }));
-    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setGlobalError('');
+    setGlobalError("");
     setTouched({ email: true, password: true });
     const validationErrors = validateAll(fields);
     setErrors(validationErrors);
@@ -104,12 +106,12 @@ function LoginForm() {
         password: fields.password,
       });
       setIsSuccess(true);
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
       const message =
         err?.response?.data?.message ||
         err?.response?.data?.errors?.[0]?.msg ||
-        'Invalid credentials. Please try again.';
+        "Invalid credentials. Please try again.";
       setGlobalError(message);
     } finally {
       setIsLoading(false);
@@ -177,8 +179,19 @@ function LoginForm() {
             aria-hidden="true"
             className="shrink-0 mt-0.5"
           >
-            <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M8 4.5v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <circle
+              cx="8"
+              cy="8"
+              r="7"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M8 4.5v4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
             <circle cx="8" cy="11.5" r="0.75" fill="currentColor" />
           </svg>
           {globalError}
@@ -194,32 +207,32 @@ function LoginForm() {
             type="email"
             placeholder="you@example.com"
             value={fields.email}
-            onChange={(e) => handleChange('email', e.target.value)}
-            onBlur={(e) => handleBlur('email', e.target.value)}
-            error={touched.email ? errors.email : ''}
+            onChange={(e) => handleChange("email", e.target.value)}
+            onBlur={(e) => handleBlur("email", e.target.value)}
+            error={touched.email ? errors.email : ""}
             disabled={isLoading}
             autoComplete="email"
-            inputProps={{ name: 'email', inputMode: 'email' }}
+            inputProps={{ name: "email", inputMode: "email" }}
           />
 
           {/* Password */}
           <FormInput
             id="login-password"
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
             value={fields.password}
-            onChange={(e) => handleChange('password', e.target.value)}
-            onBlur={(e) => handleBlur('password', e.target.value)}
-            error={touched.password ? errors.password : ''}
+            onChange={(e) => handleChange("password", e.target.value)}
+            onBlur={(e) => handleBlur("password", e.target.value)}
+            error={touched.password ? errors.password : ""}
             disabled={isLoading}
             autoComplete="current-password"
-            inputProps={{ name: 'password' }}
+            inputProps={{ name: "password" }}
             adornment={
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-pressed={showPassword}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-[#6B6B6B] hover:text-[#111] hover:bg-black/[0.04] transition-all duration-150 focus-visible:outline-2 focus-visible:outline-[#111] focus-visible:outline-offset-1"
               >
@@ -257,7 +270,7 @@ function LoginForm() {
               Signing in…
             </>
           ) : (
-            'Sign in'
+            "Sign in"
           )}
         </button>
 
@@ -265,18 +278,20 @@ function LoginForm() {
         <div className="text-center mb-4">
           <a
             href="/api/auth/google"
-            className="text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
           >
-            Continue with Google
+            <span>Continue with Google</span>
+
+            <img className="h-5 w-5" src="/google.svg" alt="Google" />
           </a>
         </div>
 
         {/* Sign up link */}
         <p className="text-center text-[14px] text-[#6B6B6B]">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <button
             type="button"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate("/register")}
             className="text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
           >
             Create account

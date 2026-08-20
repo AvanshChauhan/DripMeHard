@@ -347,12 +347,16 @@ function RegisterForm() {
           )}
         </button>
         {/*countinue with google*/}
-        <a
-          href="/api/auth/google"
-          className="text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
-        >
-          Countinue with google
-        </a>
+        <div className="text-center mb-4">
+          <a
+            href="/api/auth/google"
+            className="inline-flex items-center justify-center gap-2 text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
+          >
+            <span>Continue with Google</span>
+
+            <img className="h-5 w-5" src="/google.svg" alt="Google" />
+          </a>
+        </div>
         {/* Sign in */}
         <p className="text-center text-[14px] text-[#6B6B6B]">
           Already have an account?{" "}
