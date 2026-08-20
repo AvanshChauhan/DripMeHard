@@ -275,7 +275,7 @@ function LoginForm() {
         </button>
 
         {/* Continue with Google */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-4 border border-gray-200 rounded-xl px-4 py-3 hover:bg-gray-300">
           <a
             href="/api/auth/google"
             className="inline-flex items-center justify-center gap-2 text-[#111] font-semibold hover:opacity-60 transition-opacity duration-150 underline-offset-2 hover:underline cursor-pointer"
