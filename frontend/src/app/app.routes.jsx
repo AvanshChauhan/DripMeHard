@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import App from './App';
 import Register from '../features/auth/pages/Register';
 import Login from '../features/auth/pages/Login';
+import Contact from '../features/auth/pages/Contact';
 
 export const routes = createBrowserRouter([
     {
@@ -15,5 +16,9 @@ export const routes = createBrowserRouter([
     {
         path: "/register",
         element: <Register />
+    },
+    {
+        path: "/contact",
+        element: <Contact />
     }
-]);
+]);

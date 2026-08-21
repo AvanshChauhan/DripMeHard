@@ -38,3 +38,12 @@ export const validateLoginUser = [
   body("isSeller").optional().isBoolean().withMessage("seller must be a boolean"),
   validateRequest,
 ];
+
+export const validateUpdateContact = [
+  body("contact")
+    .notEmpty()
+    .withMessage("Contact number is required")
+    .matches(/^\d{10}$/)
+    .withMessage("Contact must be a valid 10-digit number"),
+  validateRequest,
+];

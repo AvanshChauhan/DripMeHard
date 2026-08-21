@@ -83,21 +83,103 @@ export const login = async (req, res) => {
 };
 
 export const googleCallback = async (req, res) => {
-  const {id,displayName,emails,photos}=req.user
-  const email=emails[0].value;
-  const fullname=displayName;
-  const pfp=photos[0].value;
-  const googleId=id
-  let user=await userModel.findOne({email})
-  if(!user){
-    user=await userModel.create({
-      email,fullname,googleId,
+  try {
+    const { id, displayName, emails } = req.user;
+    const email = emails && emails[0] ? emails[0].value : "";
+    const fullname = displayName || "User";
+    const googleId = id;
 
-    })
+    let user = await userModel.findOne({ email });
+    if (!user) {
+      user = await userModel.create({
+        email,
+        fullname,
+        googleId,
+      });
+    } else if (!user.googleId) {
+      user.googleId = googleId;
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const frontendBase =
+      config.NODE_ENV === "development" ? "http://localhost:5173" : "";
+
+    if (!user.contact) {
+      return res.redirect(`${frontendBase}/contact`);
+    }
+
+    return res.redirect(`${frontendBase}/`);
+  } catch (error) {
+    console.error(`Google auth callback error: ${error}`);
+    const frontendBase =
+      config.NODE_ENV === "development" ? "http://localhost:5173" : "";
+    return res.redirect(`${frontendBase}/login?error=google_auth_failed`);
   }
-  const token=jwt.sign({
-    id:user._id
-  },config.JWT_SECRET,{expiresIn:"7d"})
-  res.cookie("token",token)
-  res.redirect("http://localhost:5173/");
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = req.user;
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        contact: user.contact,
+        fullname: user.fullname,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error(`getMe error: ${error}`);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error retrieving profile." });
+  }
+};
+
+export const updateContact = async (req, res) => {
+  const { contact } = req.body;
+  try {
+    const existingUser = await userModel.findOne({
+      contact,
+      _id: { $ne: req.user._id },
+    });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "An account with this contact number already exists.",
+      });
+    }
+
+    req.user.contact = contact;
+    await req.user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Contact details updated successfully.",
+      user: {
+        id: req.user._id,
+        email: req.user.email,
+        contact: req.user.contact,
+        fullname: req.user.fullname,
+        role: req.user.role,
+      },
+    });
+  } catch (error) {
+    console.error(`updateContact error: ${error}`);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error. Please try again." });
+  }
 };
